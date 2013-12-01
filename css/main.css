@@ -1,22 +1,54 @@
-
-
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
 
+.event-avatar, .event-avatar img {
+  width: 80px;
+  height: 80px;
+}
 
+.event-avatar {
+  display: block;
+  margin: 0px auto;
+}
 
+.event-box {
+  height: 140px;
+  margin-bottom: 0px;
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
 
+.event-avatar {
+  text-align: center;
+}
 
+.event-info {
+  text-align: center;
+  padding-left: 0px;
+  padding-right: 0px;
+}
 
+.event-body {
+  padding-left: 0px;
+  padding-right: 5px;
+}
 
+.event-title h5 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 
+.event-timestamp {
+  display: inline-block;
+  position: absolute;
+  right: 5px;
+  color: #777;
+}
 
-
-
-
-
-
-
-
-
+#ghevents-events {
+  /* Starts out invisible. */
+  display: none;
+}

@@ -1,0 +1,112 @@
+<script id="whole-event" type="text/html">
+    <div class="event-box row panel panel-default">
+        <div class="event-info col-xs-2">
+            <div class="event-repo"><a href="{{repo.url}}">{{&repo_name}}</a></div>
+            <div class="event-avatar"><img src="{{actor.avatar_url}}"></img></div>
+            <div class="event-actor">{{actor.login}}</div>
+        </div>
+        <div class="event-body col-xs-10">
+            <div class="event-title"><h5>{{&event_title}}</h5></div>
+            <div class="event-description">{{&event_description}}</div>
+        </div>
+        <span class="event-timestamp">
+            <small>
+            {{timestamp}}
+            </small>
+        </span>
+    </div>
+</script>
+
+<script id="debug-login-info" type="text/html">
+    <div>
+        <div>Username: {{username}}</div>
+        <div>Organization: {{organization}}</div>
+        <div>Auth Token: {{auth_token}}</div>
+    </div>
+</script>
+
+<script id="IssueCommentEvent-title" type="text/html">
+    Comment on issue <a href="{{payload.issue.html_url}}">#{{payload.issue.number}}</a>
+    <br>
+    “{{payload.issue.title}}”
+</script>
+<script id="IssueCommentEvent-description" type="text/html">
+    “{{payload.comment.body}}”
+</script>
+
+<script id="PullRequestEvent-title" type="text/html">
+    PR <a href="{{payload.pull_request.html_url}}">#{{payload.number}}</a> {{payload.action}}
+    <br>
+    “{{payload.pull_request.title}}”
+</script>
+<script id="PullRequestEvent-description" type="text/html">
+    {{payload.pull_request.commits}} commit{{plural}} ({{payload.pull_request.additions}} additions and {{payload.pull_request.deletions}} deletions)
+    <br>
+    “{{payload.pull_request.body}}”
+</script>
+
+<script id="PullRequestReviewCommentEvent-title" type="text/html">
+    Review on PR #{{pull_request_number}}
+    <br>
+    “{{pull_request.title}}”
+</script>
+<script id="PullRequestReviewCommentEvent-description" type="text/html">
+    “{{payload.comment.body}}”
+</script>
+
+<script id="PushEvent-title" type="text/html">
+    Pushed {{payload.size}} commit{{commits_plural}} to “{{branch}}”
+</script>
+<script id="PushEvent-description" type="text/html">
+    {{n_participants}} participant{{participants_plural}}: {{participants}}
+    {{#payload.commits}}
+    <br>
+    {{render_commit}}
+    {{/payload.commits}}
+</script>
+
+<script id="UnsupportedEvent-title" type="text/html">
+    {{type}} (not supported)
+</script>
+<script id="UnsupportedEvent-description" type="text/html">
+    <pre>{{payload}}</pre>
+</script>
+
+<script id="IssuesEvent-title" type="text/html">
+    Issue <a href="{{payload.issue.html_url}}">#{{payload.issue.number}}</a> {{payload.action}}
+    <br>
+    “{{payload.issue.title}}”
+</script>
+<script id="IssuesEvent-description" type="text/html">
+    {{payload.issue.body}}
+    {{^payload.issue.body}}
+    No description given.
+    {{/payload.issue.body}}
+</script>
+
+<script id="CreateEvent-title" type="text/html">
+    {{ref_type}} {{ref}} created.
+</script>
+<script id="CreateEvent-description" type="text/html">
+    {{description}}
+</script>
+
+<script id="DeleteEvent-title" type="text/html">
+    {{ref_type}} “{{payload.ref}}” deleted.
+</script>
+<script id="DeleteEvent-description" type="text/html">
+</script>
+
+<script id="CommitCommentEvent-title" type="text/html">
+    Comment on “{{payload.path}}”
+</script>
+<script id="CommitCommentEvent-description" type="text/html">
+    <a href="{{payload.html_url}}">@{{payload.line}},{{payload.position}}</a>
+    <br>
+    “{{payload.body}}”
+</script>
+
+<script id="Event-title" type="text/html">
+</script>
+<script id="Event-description" type="text/html">
+</script>
