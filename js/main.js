@@ -210,15 +210,30 @@ var ghevents = (function () {
         });
     };
 
+    var getLocalLoginInfo = function () {
+        login_info.username = localStorage.getItem("username");
+        login_info.organization = localStorage.getItem("organization");
+        login_info.access_token = localStorage.getItem("access_token");
+    };
+
+    var storeLocalLoginInfo = function () {
+        localStorage.setItem("username", login_info.username);
+        localStorage.setItem("organization", login_info.organization);
+        localStorage.setItem("access_token", login_info.access_token);
+    }
+
     //// Public interface /////////////////////////////////////////////////
     var initModule = function ($container) {
+        getLocalLoginInfo();
         $.Mustache.load('templates/event-templates.html').done(function() {
             if (login_info.username == null) {
+                $('#login-form').fadeIn();
                 $('#login_button').click(function (event) {
                     // Grab the login information.
                     login_info.username = $('#username').val();
                     login_info.organization = $('#organization').val();
                     login_info.access_token = $('#access_token').val();
+                    storeLocalLoginInfo();
                     // Hide the form and start getting events.
                     $('#login-form').fadeOut();
                     showEvents();
@@ -226,8 +241,7 @@ var ghevents = (function () {
                     event.preventDefault();
                 });
             } else {
-                // Hide the form and start getting events.
-                $('#login-form').fadeOut();
+                // Logged in. Start getting events now.
                 showEvents();
                 window.setInterval(showEvents, refresh_period);
             }

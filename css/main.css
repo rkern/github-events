@@ -48,7 +48,8 @@
   color: #777;
 }
 
-#ghevents-events {
+#ghevents-events, #login-form {
   /* Starts out invisible. */
   display: none;
 }
+
