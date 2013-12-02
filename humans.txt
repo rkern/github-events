@@ -3,13 +3,18 @@
 
 # TEAM
 
-    <name> -- <role> -- <twitter>
+    Robert Kern -- Author
 
 # THANKS
 
-    <name>
+    Pietro Berkes for github_newsfeed
 
 # TECHNOLOGY COLOPHON
 
     HTML5, CSS3
     jQuery, Modernizr
+    Bootstrap 3
+    Mustache templates
+    jQuery-dotdotdot
+    jQuery-mustache
+    strftime
