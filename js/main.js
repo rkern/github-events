@@ -3,12 +3,9 @@ var ghevents = (function () {
 
     // The login information to be filled in by the login form.
     var login_info = {
-        // username: null,
-        // organization: null,
-        // access_token: null
-        username: "pberkes",
-        organization: "enthought",
-        access_token: "fd3a0e0f44cef1bfce068d5695c73484dfccc2d2"
+        username: null,
+        organization: null,
+        access_token: null
     };
 
     // The event refresh period in milliseconds.
