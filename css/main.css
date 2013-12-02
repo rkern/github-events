@@ -13,7 +13,6 @@
 }
 
 .event-box {
-  height: 140px;
   margin-bottom: 0px;
   margin-top: 5px;
   overflow: hidden;
@@ -48,7 +47,7 @@
   color: #777;
 }
 
-#ghevents-events, #login-form {
+#ghevents-events, #login-form, #navbar {
   /* Starts out invisible. */
   display: none;
 }

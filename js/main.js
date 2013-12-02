@@ -127,7 +127,7 @@ var ghevents = (function () {
             ns.pull_request_number = rsplitIndex(pr_api_url, '/', -1);
             $.ajax({
                 dataType: "json",
-                url: pr_api_url,
+                url: pr_api_url + '?access_token=' + login_info.access_token,
                 async: false
             }).done(function (json) {
                 ns.pull_request = json;
@@ -203,7 +203,7 @@ var ghevents = (function () {
                 ellipsis: "…",
                 watch: true
             });
-            $('#ghevents-events').fadeIn();
+            $('#ghevents-events,.slim-navbar').fadeIn();
         });
     };
 
@@ -219,24 +219,40 @@ var ghevents = (function () {
         localStorage.setItem("access_token", login_info.access_token);
     }
 
+    var clearLocalLoginInfo = function () {
+        login_info.username = null;
+        login_info.organization = null;
+        login_info.access_token = null;
+        localStorage.removeItem("username");
+        localStorage.removeItem("organization");
+        localStorage.removeItem("access_token");
+    }
+
     //// Public interface /////////////////////////////////////////////////
     var initModule = function ($container) {
         getLocalLoginInfo();
         $.Mustache.load('templates/event-templates.html').done(function() {
+            $('.logout-link').click(function (event) {
+                clearLocalLoginInfo();
+                $('#ghevents-events').fadeOut();
+                $('.slim-navbar').fadeOut();
+                $('#login-form').fadeIn();
+                event.preventDefault();
+            });
+            $('#login_button').click(function (event) {
+                // Grab the login information.
+                login_info.username = $('#username').val();
+                login_info.organization = $('#organization').val();
+                login_info.access_token = $('#access_token').val();
+                storeLocalLoginInfo();
+                // Hide the form and start getting events.
+                $('#login-form').fadeOut();
+                showEvents();
+                window.setInterval(showEvents, refresh_period);
+                event.preventDefault();
+            });
             if (login_info.username == null) {
                 $('#login-form').fadeIn();
-                $('#login_button').click(function (event) {
-                    // Grab the login information.
-                    login_info.username = $('#username').val();
-                    login_info.organization = $('#organization').val();
-                    login_info.access_token = $('#access_token').val();
-                    storeLocalLoginInfo();
-                    // Hide the form and start getting events.
-                    $('#login-form').fadeOut();
-                    showEvents();
-                    window.setInterval(showEvents, refresh_period);
-                    event.preventDefault();
-                });
             } else {
                 // Logged in. Start getting events now.
                 showEvents();
