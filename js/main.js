@@ -105,6 +105,9 @@ var ghevents = (function () {
             ns.ref_type = ns.payload.ref_type.capitalize();
             return ns;
         },
+        GollumEvent: function(ns) {
+            return ns;
+        },
         IssuesEvent: function(ns) {return ns;},
         PullRequestEvent: function(ns) {
             if (ns.payload.pull_request.commits == 1) {

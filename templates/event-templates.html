@@ -106,6 +106,16 @@
     “{{payload.body}}”
 </script>
 
+<script id="GollumEvent-title" type="text/html">
+    Wiki updated
+</script>
+<script id="GollumEvent-description" type="text/html">
+    {{#payload.pages}}
+    <a href="{{html_url}}">{{title}}</a> {{action}}
+    <br>
+    {{/payload.pages}}
+</script>
+
 <script id="Event-title" type="text/html">
 </script>
 <script id="Event-description" type="text/html">
