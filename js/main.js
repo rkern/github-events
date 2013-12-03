@@ -15,7 +15,7 @@ var ghevents = (function () {
     var max_events = 50;
 
     // Split a string by a delimiter and index with Python semantics.
-    var rsplitIndex = function(string, delimiter, index) {
+    var splitIndex = function(string, delimiter, index) {
         var bits = string.split(delimiter);
         if (index < 0) {
             index += bits.length;
@@ -25,7 +25,7 @@ var ghevents = (function () {
 
     var firstLine = function(line) {
         if (line) {
-            return rsplitIndex(line, '\n', 0);
+            return splitIndex(line, '\n', 0);
         } else {
             return '';
         }
@@ -124,7 +124,7 @@ var ghevents = (function () {
         },
         PullRequestReviewCommentEvent: function(ns) {
             var pr_api_url = ns.payload.comment._links.pull_request.href;
-            ns.pull_request_number = rsplitIndex(pr_api_url, '/', -1);
+            ns.pull_request_number = splitIndex(pr_api_url, '/', -1);
             $.ajax({
                 dataType: "json",
                 url: pr_api_url + '?access_token=' + login_info.access_token,
@@ -156,7 +156,7 @@ var ghevents = (function () {
                 ns.commits_plural = "s";
             }
 
-            ns.branch = rsplitIndex(ns.payload.ref, '/', -1);
+            ns.branch = splitIndex(ns.payload.ref, '/', -1);
             ns.render_commit = function () {
                 return this.author.name + ": “" + firstLine(this.message) + "”";
             };
@@ -174,6 +174,31 @@ var ghevents = (function () {
                 + login_info.access_token);
     };
 
+    var shouldShowEvent = function (ns) {
+        var should_show = true;
+        should_show &= (ns.type in event_namespaces);
+        should_show &= (splitIndex(ns.repo.name, '/', 0) == login_info.organization);
+        return should_show;
+    };
+
+    var breakWord = function (word) {
+        var parts = [];
+        var i, character;
+        for (i=0; i < word.length; i++) {
+            character = word.charAt(i);
+            if (character in ['-', '_', '/']) {
+                parts.push(character);
+                parts.push('<wbr>');
+            } else if (character == character.toUpperCase()) {
+                parts.push('<wbr>');
+                parts.push(character);
+            } else {
+                parts.push(character);
+            }
+        }
+        return parts.join('');
+    };
+
     var showEvents = function () {
         $.getJSON(organizationFeedURL(), function (data) {
             var namespaces = [];
@@ -181,11 +206,12 @@ var ghevents = (function () {
                 var ns;
                 var type;
                 if (namespaces.length < max_events) {
-                    if (val.type in event_namespaces) {
+                    if (shouldShowEvent(val)) {
                         ns = event_namespaces[val.type](val);
                         type = val.type;
                         ns.timestamp = strftime("%d %b, %H:%M", new Date(ns.created_at));
-                        ns.repo_name = ns.repo.name.replace('/', '/<wbr>');
+                        // ns.repo_name = ns.repo.name.replace('/', '/<wbr>');
+                        ns.repo_name = breakWord(splitIndex(ns.repo.name, '/', 1));
                         ns.event_title = $.Mustache.render(type + '-title', ns);
                         ns.event_description = $.Mustache.render(type + '-description', ns);
                         namespaces.push(ns);

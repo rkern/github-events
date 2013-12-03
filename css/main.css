@@ -2,6 +2,12 @@
    Author's custom styles
    ========================================================================== */
 
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,700);
+
+body {
+  font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+}
+
 .event-avatar, .event-avatar img {
   width: 80px;
   height: 80px;
@@ -27,7 +33,7 @@
 .event-info {
   text-align: center;
   padding-left: 0px;
-  padding-right: 0px;
+  padding-right: 5px;
 }
 
 .event-body {
@@ -35,7 +41,8 @@
   padding-right: 5px;
 }
 
-.event-title h5 {
+h5 {
+  color: #00355F;
   margin-top: 5px;
   margin-bottom: 5px;
 }
@@ -45,6 +52,10 @@
   position: absolute;
   right: 5px;
   color: #777;
+}
+
+#navbar {
+  color: #00355F;
 }
 
 #ghevents-events, #login-form, #navbar {
