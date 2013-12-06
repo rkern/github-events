@@ -8,6 +8,26 @@ var ghevents = (function () {
         access_token: null
     };
 
+    // Cache of true names of users.
+    var userNameCache = {};
+
+    var lookupUserName = function (loginId) {
+        if (!(loginId in userNameCache)) {
+            $.ajax({
+                dataType: "json",
+                url: 'https://api.github.com/users/' + loginId + '?access_token=' + login_info.access_token,
+                async: false
+            }).done(function (json) {
+                if (json.name) {
+                    userNameCache[loginId] = json.name;
+                } else {
+                    userNameCache[loginId] = loginId;
+                }
+            });
+        }
+        return userNameCache[loginId];
+    };
+
     // The event refresh period in milliseconds.
     var refresh_period = 5 * 60 * 1000;
 
@@ -118,7 +138,7 @@ var ghevents = (function () {
             return ns;
         },
         CommitCommentEvent: function(ns) {
-            ns.payload.body = stripEmailReplyLines(ns.payload.body);
+            ns.payload.body = stripEmailReplyLines(ns.payload.comment.body);
             return ns;
         },
         IssueCommentEvent: function(ns) {
@@ -210,23 +230,25 @@ var ghevents = (function () {
                 var type;
                 if (namespaces.length < max_events) {
                     if (shouldShowEvent(val)) {
-                        ns = event_namespaces[val.type](val);
                         type = val.type;
+                        ns = event_namespaces[type](val);
                         ns.timestamp = strftime("%d %b, %H:%M", new Date(ns.created_at));
                         // ns.repo_name = ns.repo.name.replace('/', '/<wbr>');
                         ns.repo_name = breakWord(splitIndex(ns.repo.name, '/', 1));
                         ns.event_title = $.Mustache.render(type + '-title', ns);
                         ns.event_description = $.Mustache.render(type + '-description', ns);
+                        ns.user_name = lookupUserName(ns.actor.login);
                         namespaces.push(ns);
                     }
                 }
             });
+            $.each(namespaces, function (index, ns) {
+                $('#ghevents-store').mustache('whole-event', ns);
+            });
             if ($('#ghevents-events').children()) {
                 $('#ghevents-events').fadeOut().empty();
             }
-            $.each(namespaces, function (index, ns) {
-                $('#ghevents-events').mustache('whole-event', ns);
-            });
+            $('.event-box').appendTo('#ghevents-events');
             $('.event-body').dotdotdot({
                 height: 160,
                 ellipsis: "…",
