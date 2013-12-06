@@ -6,6 +6,14 @@
 
 body {
   font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+  font-size: 18px;
+}
+
+h5 {
+  color: #00355F;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 .event-avatar, .event-avatar img {
@@ -39,12 +47,6 @@ body {
 .event-body {
   padding-left: 0px;
   padding-right: 5px;
-}
-
-h5 {
-  color: #00355F;
-  margin-top: 5px;
-  margin-bottom: 5px;
 }
 
 .event-timestamp {
