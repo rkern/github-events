@@ -228,7 +228,7 @@ var ghevents = (function () {
                 $('#ghevents-events').mustache('whole-event', ns);
             });
             $('.event-body').dotdotdot({
-                height: 130,
+                height: 160,
                 ellipsis: "…",
                 watch: true
             });
