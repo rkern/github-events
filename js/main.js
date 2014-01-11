@@ -35,6 +35,9 @@ var ghevents = (function () {
     // The maximum number of events to show.
     var max_events = 50;
 
+    // The IDs of shown events.
+    var shown_events = {};
+
     var createCookie = function (name, value, days) {
         var expires;
 
@@ -228,6 +231,7 @@ var ghevents = (function () {
 
     var shouldShowEvent = function (ns) {
         var should_show = true;
+        should_show &= !(ns.id in shown_events);
         should_show &= (ns.type in event_namespaces);
         should_show &= (splitIndex(ns.repo.name, '/', 0) == login_info.organization);
         return should_show;
@@ -252,38 +256,38 @@ var ghevents = (function () {
     };
 
     var showEvents = function () {
+        var gh_events = $('#ghevents-events');
         $.getJSON(organizationFeedURL(), function (data) {
-            var namespaces = [];
+            // Put the events in ascending `created_at` order.
+            data.reverse();
             $.each(data, function (index, val) {
                 var ns;
                 var type;
-                if (namespaces.length < max_events) {
-                    if (shouldShowEvent(val)) {
-                        type = val.type;
-                        ns = event_namespaces[type](val);
-                        ns.timestamp = strftime("%d %b, %H:%M", new Date(ns.created_at));
-                        // ns.repo_name = ns.repo.name.replace('/', '/<wbr>');
-                        ns.repo_name = breakWord(splitIndex(ns.repo.name, '/', 1));
-                        ns.event_title = $.Mustache.render(type + '-title', ns);
-                        ns.event_description = $.Mustache.render(type + '-description', ns);
-                        ns.user_name = lookupUserName(ns.actor.login);
-                        namespaces.push(ns);
+                if (shouldShowEvent(val)) {
+                    type = val.type;
+                    ns = event_namespaces[type](val);
+                    ns.timestamp = strftime("%d %b, %H:%M", new Date(ns.created_at));
+                    ns.repo_name = breakWord(splitIndex(ns.repo.name, '/', 1));
+                    ns.event_title = $.Mustache.render(type + '-title', ns);
+                    ns.event_description = $.Mustache.render(type + '-description', ns);
+                    ns.user_name = lookupUserName(ns.actor.login);
+                    while (gh_events.length > max_events) {
+                        // Pop off the last event.
+                        var last_event = rendered_events.last();
+                        shown_events.remove(last_event.attr('data-id'));
+                        last_event.remove();
                     }
+                    // Render this event and prepend it.
+                    var new_event = $($.parseHTML($.Mustache.render('whole-event', ns))).dotdotdot({
+                        height: 160,
+                        ellipsis: "…",
+                        watch: true
+                    }).hide();
+                    gh_events.prepend(new_event);
+                    new_event.fadeIn();
+                    shown_events[ns.id] = true;
                 }
             });
-            $.each(namespaces, function (index, ns) {
-                $('#ghevents-store').mustache('whole-event', ns);
-            });
-            if ($('#ghevents-events').children()) {
-                $('#ghevents-events').fadeOut().empty();
-            }
-            $('.event-box').appendTo('#ghevents-events');
-            $('.event-body').dotdotdot({
-                height: 160,
-                ellipsis: "…",
-                watch: true
-            });
-            $('#ghevents-events,.slim-navbar').fadeIn();
         });
     };
 
@@ -332,6 +336,7 @@ var ghevents = (function () {
                 // Hide the form and start getting events.
                 $('#login-form').fadeOut();
                 showEvents();
+                $('#ghevents-events,.slim-navbar').fadeIn();
                 window.setInterval(showEvents, refresh_period);
                 event.preventDefault();
             });
@@ -340,6 +345,7 @@ var ghevents = (function () {
             } else {
                 // Logged in. Start getting events now.
                 showEvents();
+                $('#ghevents-events,.slim-navbar').fadeIn();
                 window.setInterval(showEvents, refresh_period);
             }
         });
