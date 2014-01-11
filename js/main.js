@@ -29,10 +29,39 @@ var ghevents = (function () {
     };
 
     // The event refresh period in milliseconds.
+    // var refresh_period = 5 * 1000;
     var refresh_period = 5 * 60 * 1000;
 
     // The maximum number of events to show.
     var max_events = 50;
+
+    var createCookie = function (name, value, days) {
+        var expires;
+
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            expires = "; expires=" + date.toGMTString();
+        } else {
+            expires = "";
+        }
+        document.cookie = escape(name) + "=" + escape(value) + expires + "; path=/";
+    }
+
+    var readCookie = function (name) {
+        var nameEQ = escape(name) + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    var eraseCookie = function (name) {
+        createCookie(name, "", -1);
+    }
 
     // Split a string by a delimiter and index with Python semantics.
     var splitIndex = function(string, delimiter, index) {
@@ -259,30 +288,34 @@ var ghevents = (function () {
     };
 
     var getLocalLoginInfo = function () {
-        login_info.username = localStorage.getItem("username");
-        login_info.organization = localStorage.getItem("organization");
-        login_info.access_token = localStorage.getItem("access_token");
+        login_info.username = readCookie("username");
+        login_info.organization = readCookie("organization");
+        login_info.access_token = readCookie("access_token");
     };
 
     var storeLocalLoginInfo = function () {
-        localStorage.setItem("username", login_info.username);
-        localStorage.setItem("organization", login_info.organization);
-        localStorage.setItem("access_token", login_info.access_token);
+        createCookie("username", login_info.username);
+        createCookie("organization", login_info.organization);
+        createCookie("access_token", login_info.access_token);
     }
 
     var clearLocalLoginInfo = function () {
         login_info.username = null;
         login_info.organization = null;
         login_info.access_token = null;
-        localStorage.removeItem("username");
-        localStorage.removeItem("organization");
-        localStorage.removeItem("access_token");
+        eraseCookie("username");
+        eraseCookie("organization");
+        eraseCookie("access_token");
     }
 
     //// Public interface /////////////////////////////////////////////////
     var initModule = function ($container) {
         getLocalLoginInfo();
         $.Mustache.load('templates/event-templates.html').done(function() {
+            $('.reload-link').click(function (event) {
+                showEvents();
+                event.preventDefault();
+            });
             $('.logout-link').click(function (event) {
                 clearLocalLoginInfo();
                 $('#ghevents-events').fadeOut();

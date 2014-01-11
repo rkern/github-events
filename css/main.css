@@ -61,7 +61,7 @@ h5 {
   color: #00355F;
 }
 
-#ghevents-events, #ghevents-store, #login-form, #navbar {
+#ghevents-events, #ghevents-store, #login-form, .slim-navbar {
   /* Starts out invisible. */
   display: none;
 }
