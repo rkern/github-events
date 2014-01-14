@@ -29,7 +29,6 @@ var ghevents = (function () {
     };
 
     // The event refresh period in milliseconds.
-    // var refresh_period = 5 * 1000;
     var refresh_period = 5 * 60 * 1000;
 
     // The maximum number of events to show.
