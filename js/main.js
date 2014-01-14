@@ -270,19 +270,20 @@ var ghevents = (function () {
                     ns.event_title = $.Mustache.render(type + '-title', ns);
                     ns.event_description = $.Mustache.render(type + '-description', ns);
                     ns.user_name = lookupUserName(ns.actor.login);
-                    while (gh_events.length > max_events) {
+                    while (gh_events.children().length > max_events) {
                         // Pop off the last event.
-                        var last_event = rendered_events.last();
+                        var last_event = gh_events.children().last();
                         shown_events.remove(last_event.attr('data-id'));
                         last_event.remove();
                     }
                     // Render this event and prepend it.
-                    var new_event = $($.parseHTML($.Mustache.render('whole-event', ns))).dotdotdot({
+                    var new_event = $($.parseHTML($.Mustache.render('whole-event', ns))).hide();
+                    gh_events.prepend(new_event);
+                    new_event.children('.event-body').dotdotdot({
                         height: 160,
                         ellipsis: "…",
                         watch: true
-                    }).hide();
-                    gh_events.prepend(new_event);
+                    })
                     new_event.fadeIn();
                     shown_events[ns.id] = true;
                 }
