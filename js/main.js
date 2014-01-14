@@ -298,9 +298,9 @@ var ghevents = (function () {
     };
 
     var storeLocalLoginInfo = function () {
-        createCookie("username", login_info.username);
-        createCookie("organization", login_info.organization);
-        createCookie("access_token", login_info.access_token);
+        createCookie("username", login_info.username, 730);
+        createCookie("organization", login_info.organization, 730);
+        createCookie("access_token", login_info.access_token, 730);
     }
 
     var clearLocalLoginInfo = function () {
