@@ -273,7 +273,7 @@ var ghevents = (function () {
                     while (gh_events.children().length > max_events) {
                         // Pop off the last event.
                         var last_event = gh_events.children().last();
-                        shown_events.remove(last_event.attr('data-id'));
+                        delete shown_events[last_event.attr('data-id')];
                         last_event.remove();
                     }
                     // Render this event and prepend it.
